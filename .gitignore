@@ -2,6 +2,17 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
+Dockerfile
+Makefile
+Pipfile
+Pipfile.lock
+docker-compose-tools.yaml
+docker-compose.yaml
+manage.py
+redis.conf
+requirements-dev.txt
+requirements-prd.txt
 
 # C extensions
 *.so
