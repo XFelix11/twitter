@@ -1,4 +1,4 @@
-from django.test import TestCase
+from testing.testcases import TestCase
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 # Create your tests here.
@@ -18,10 +18,10 @@ class AccountApiTests(TestCase):
             password='correct password',
         )
 
-    def create_user(self, username, email, password):
-        #we can not code like User.objects.create() here
-        #because password need to be encoded and  username and email need to be normalized 
-        return User.objects.create_user(username, email, password)
+    # def create_user(self, username, email, password):
+    #     #we can not code like User.objects.create() here
+    #     #because password need to be encoded and  username and email need to be normalized 
+    #     return User.objects.create_user(username, email, password)
     
     def test_login(self):
         #every test function need to be named beginning with test_ and it will be called when testing 
