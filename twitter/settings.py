@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'tweets',
     'friendships',
+    'newsfeeds',
 ]
 
 #翻页机制
