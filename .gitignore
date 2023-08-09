@@ -14,6 +14,7 @@ redis.conf
 requirements-dev.txt
 requirements-prd.txt
 
+
 # C extensions
 *.so
 
@@ -71,6 +72,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+
 
 # Flask stuff:
 instance/
