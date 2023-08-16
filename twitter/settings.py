@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'debug_toolbar',
     'django_filters',
+    'notifications',
 
     #project apps
     'tweets',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'newsfeeds',
     'comments',
     'likes',
+    'inbox',
 ]
 
 #翻页机制
