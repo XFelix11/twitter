@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'notifications',
 
     #project apps
+    'accounts',
     'tweets',
     'friendships',
     'newsfeeds',
