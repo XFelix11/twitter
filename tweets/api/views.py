@@ -77,3 +77,4 @@ class TweetViewSet(viewsets.GenericViewSet):
             tweet, context={'request':request},).data, 
             status=201,
         )
+    
