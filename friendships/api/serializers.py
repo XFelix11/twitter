@@ -23,7 +23,7 @@ class FollowingUserIdSetMixin:
 # 即 model_instance.xxx 来获得数据
 # https://www.django-rest-framework.org/api-guide/serializers/#specifying-fields-explicitly
 class FollowerSerializer(serializers.ModelSerializer, FollowingUserIdSetMixin):
-    user = UserSerializerForFriendships(source='from_user')
+    user = UserSerializerForFriendships(source='cached_from_user')
     has_followed = serializers.SerializerMethodField()
 
     class Meta:
@@ -34,7 +34,7 @@ class FollowerSerializer(serializers.ModelSerializer, FollowingUserIdSetMixin):
         return obj.from_user_id in self.following_user_id_set
 
 class FollowingSerializer(serializers.ModelSerializer, FollowingUserIdSetMixin):
-    user = UserSerializerForFriendships(source='to_user')
+    user = UserSerializerForFriendships(source='cached_to_user')
     has_followed = serializers.SerializerMethodField()
 
     class Meta:
