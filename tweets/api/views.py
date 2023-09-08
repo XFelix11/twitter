@@ -42,6 +42,7 @@ class TweetViewSet(viewsets.GenericViewSet):
         # tweets = TweetService.get_cached_tweets(user_id=user_id)
         # tweets = self.paginate_queryset(tweets)
         user_id = request.query_params['user_id']
+        #tweets = Tweet.objects.filter(user_id=user_id).prefetch_related('user')
         cached_tweets = TweetService.get_cached_tweets(user_id)
         page = self.paginator.paginate_cached_list(cached_tweets, request)
         if page is None:
