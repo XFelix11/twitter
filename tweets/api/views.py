@@ -11,6 +11,8 @@ from newsfeeds.services import NewsFeedService
 from utils.decorators import required_params
 from utils.paginations import EndlessPagination
 from tweets.services import TweetService
+from ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 
 
 class TweetViewSet(viewsets.GenericViewSet):
@@ -64,6 +66,7 @@ class TweetViewSet(viewsets.GenericViewSet):
         # 而不能用 list 的格式（约定俗成）
         return self.get_paginated_response(serializer.data)
     
+    @method_decorator(ratelimit(key='user_or_ip', rate='5/s', method='GET', block=True))
     def retrieve(self, request, *args, **kwargs):
         tweet = self.get_object()
         serializer = TweetSerializerForDetail(
@@ -72,7 +75,8 @@ class TweetViewSet(viewsets.GenericViewSet):
         )
         return Response(serializer.data)
         
-    
+    @method_decorator(ratelimit(key='user', rate='1/s', method='POST', block=True))
+    @method_decorator(ratelimit(key='user', rate='5/m', method='POST', block=True))
     def create(self, request, *args, **kwargs):
         """
         重载 create 方法，因为需要默认用当前登录用户作为 tweet.user
