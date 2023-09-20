@@ -16,6 +16,7 @@ manage.py
 redis.conf
 requirements-dev.txt
 requirements-prd.txt
+testhbase.py
 
 
 # C extensions
