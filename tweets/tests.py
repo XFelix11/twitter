@@ -58,7 +58,7 @@ class TweetTests(TestCase):
 class TweetServiceTests(TestCase):
 
     def setUp(self):
-        self.clear_cache()
+        super(TweetServiceTests, self).setUp()
         self.linghu = self.create_user('linghu')
 
     def test_get_user_tweets(self):

@@ -10,7 +10,7 @@ NOTIFICATION_URL = '/api/notifications/'
 class NotificationTests(TestCase):
 
     def setUp(self):
-        self.clear_cache()
+        super(NotificationApiTests, self).setUp()
         self.linghu, self.linghu_client = self.create_user_and_client('linghu')
         self.dongxie, self.dongxie_client = self.create_user_and_client('dong')
         self.dongxie_tweet = self.create_tweet(self.dongxie)
