@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.core.cache import caches
-from friendships.models import Friendship
 from twitter.cache import FOLLOWINGS_PATTERN
 from gatekeeper.models import GateKeeper
-from friendships.hbase_models import HBaseFollowing, HBaseFollower
+from friendships.models import HBaseFollowing, HBaseFollower, Friendship
+
 
 import time
 
@@ -15,12 +15,10 @@ class FriendshipService(object):
     
     @classmethod
     def get_follower_ids(cls, to_user_id):
-        
         if not GateKeeper.is_switch_on('switch_friendship_to_hbase'):
             friendships = Friendship.objects.filter(to_user_id=to_user_id)
         else:
             friendships = HBaseFollower.filter(prefix=(to_user_id, None))
-
         return [friendship.from_user_id for friendship in friendships]
 
     @classmethod
@@ -30,18 +28,24 @@ class FriendshipService(object):
             friendships = Friendship.objects.filter(from_user_id=from_user_id)
         else:
             friendships = HBaseFollowing.filter(prefix=(from_user_id, None))
-
         user_id_set = set([
             fs.to_user_id
             for fs in friendships
         ])
-
         return user_id_set
 
     @classmethod
     def invalidate_following_cache(cls, from_user_id):
         key = FOLLOWINGS_PATTERN.format(user_id=from_user_id)
         cache.delete(key)
+
+    @classmethod
+    def get_follow_instance(cls, from_user_id, to_user_id):
+        followings = HBaseFollowing.filter(prefix=(from_user_id, None))
+        for follow in followings:
+            if follow.to_user_id == to_user_id:
+                return follow
+        return None
 
     @classmethod
     def get_followers(cls, user):
@@ -81,24 +85,14 @@ class FriendshipService(object):
     #     ).exists()
 
     @classmethod
-    def get_follow_instance(cls, from_user_id, to_user_id):
-        followings = HBaseFollowing.filter(prefix=(from_user_id, None))
-        for follow in followings:
-            if follow.to_user_id == to_user_id:
-                return follow
-        return None
-
-    @classmethod
     def has_followed(cls, from_user_id, to_user_id):
         if from_user_id == to_user_id:
-            return True
-
+            return False
         if not GateKeeper.is_switch_on('switch_friendship_to_hbase'):
             return Friendship.objects.filter(
                 from_user_id=from_user_id,
                 to_user_id=to_user_id,
             ).exists()
-
         instance = cls.get_follow_instance(from_user_id, to_user_id)
         return instance is not None
     
@@ -132,7 +126,7 @@ class FriendshipService(object):
     def unfollow(cls, from_user_id, to_user_id):
         if from_user_id == to_user_id:
             return 0
-
+        
         if not GateKeeper.is_switch_on('switch_friendship_to_hbase'):
             # https://docs.djangoproject.com/en/3.1/ref/models/querysets/#delete
             # Queryset 的 delete 操作返回两个值，一个是删了多少数据，一个是具体每种类型删了多少
@@ -146,11 +140,11 @@ class FriendshipService(object):
                 to_user_id=to_user_id,
             ).delete()
             return deleted
-
+        
         instance = cls.get_follow_instance(from_user_id, to_user_id)
         if instance is None:
             return 0
-
+        
         HBaseFollowing.delete(from_user_id=from_user_id, created_at=instance.created_at)
         HBaseFollower.delete(to_user_id=to_user_id, created_at=instance.created_at)
         return 1
