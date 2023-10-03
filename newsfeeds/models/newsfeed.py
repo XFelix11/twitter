@@ -1,4 +1,8 @@
 # Create your models here.
+"""
+Deprecated
+use newsfeeds.models.hbase_models.HBaseNewsFeed instead
+"""
 from django.db import models
 from django.contrib.auth.models import User
 from tweets.models import Tweet

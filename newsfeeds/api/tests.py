@@ -1,5 +1,4 @@
 from newsfeeds.models import NewsFeed
-from friendships.models import Friendship
 from rest_framework.test import APIClient
 from testing.testcases import TestCase
 from utils.paginations import EndlessPagination
@@ -23,6 +22,14 @@ class NewsFeedApiTests(TestCase):
         self.dongxie = self.create_user('dongxie')
         self.dongxie_client = APIClient()
         self.dongxie_client.force_authenticate(self.dongxie)
+
+        # create followings and followers for dongxie
+        for i in range(2):
+            follower = self.create_user('dongxie_follower{}'.format(i))
+            self.create_friendship(from_user=follower, to_user=self.dongxie)
+        for i in range(3):
+            following = self.create_user('dongxie_following{}'.format(i))
+            self.create_friendship(from_user=self.dongxie, to_user=following)
 
 
     def test_list(self):
