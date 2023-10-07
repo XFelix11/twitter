@@ -122,6 +122,7 @@ class HBaseModel:
     @property
     def row_key(self):
         return self.serialize_row_key(self.__dict__)
+    
 
     @classmethod
     def get_table(cls):
@@ -238,3 +239,7 @@ class HBaseModel:
         row_key = cls.serialize_row_key(kwargs)
         table = cls.get_table()
         return table.delete(row_key)
+    
+    @property
+    def id(self):
+        return self.row_key
